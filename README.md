@@ -7,6 +7,12 @@
 
 <!-- SCREENSHOT PLACEHOLDER: docs/screenshots/overview.png -->
 
+> **Why this matters:** Push-based live updates and server-side role
+> enforcement are the default shape of any internal tool more than one
+> person uses — hired for as *Full-Stack* or *Backend Engineer*. It's the
+> same WebSocket + RBAC pattern Centric/Keyholders needs for live ops
+> dashboards.
+
 ## Why This Was Built
 
 Internal tools decide whether an operations team's day is calm or chaotic, and they're usually the least
@@ -30,7 +36,20 @@ to know at a glance.
 
 ```
 Ops-Management-Dashboard/
-├── README.md
+├── backend/
+│   ├── app/
+│   │   ├── main.py               # /ws/{user_id}, GET/POST /tickets, POST /tickets/{id}/assign
+│   │   ├── connection_manager.py # tracks active_connections, scopes broadcast() by role
+│   │   ├── deps.py                # get_current_role, require_manager (RBAC)
+│   │   └── schemas.py             # WSEvent — the one shape every message takes
+│   ├── tests/test_main.py         # TestClient.websocket_connect() integration tests
+│   └── requirements.txt
+├── frontend/
+│   ├── src/hooks/useWebSocket.ts        # auto-reconnecting WS connection
+│   ├── src/context/WebSocketProvider.tsx # bridges WS events -> React Query invalidation
+│   ├── src/hooks/useTickets.ts
+│   └── src/App.tsx
+├── .github/workflows/ci.yml
 ├── docs/{LESSON_PLAN.md, interactive/index.html, screenshots/}
 ├── LICENSE-GPL
 └── LICENSE-AGPL
@@ -41,13 +60,18 @@ Ops-Management-Dashboard/
 ```bash
 git clone https://github.com/niciahrymer-hillian/Ops-Management-Dashboard.git
 cd Ops-Management-Dashboard
+
 # Backend
-uvicorn app.main:app --reload
+cd backend && pip install -r requirements.txt
+uvicorn app.main:app --reload --port 8000
 
-# Frontend
-npm install && npm run dev
+# Frontend (separate terminal)
+cd frontend && npm install && npm run dev
 
-# Open the dashboard and watch a second browser update live
+# Open the dashboard, then in another browser tab/window hit the API directly:
+#   curl -X POST localhost:8000/tickets -H "X-User-Role: STAFF" -H "X-User-Id: 2" \
+#        -H "Content-Type: application/json" -d '{"title":"Leak in unit 4B"}'
+# Watch it show up without a manual refresh.
 open http://localhost:5173
 ```
 

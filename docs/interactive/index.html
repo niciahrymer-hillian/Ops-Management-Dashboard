@@ -1,9 +1,402 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1"><title>Ops-Management-Dashboard &mdash; Tour</title>
-<style>body{margin:0;font-family:-apple-system,sans-serif;background:#06101a;color:#e6e6e6}
-header{padding:18px 24px;border-bottom:1px solid #ffffff14}main{display:grid;grid-template-columns:1fr 1fr;min-height:60vh}
-.lesson,.practice{padding:24px}.lesson{border-right:1px solid #ffffff14}h1,h2{color:#378ADD}
-textarea{width:100%;min-height:240px;background:#0000005c;color:#e6e6e6;border:1px solid #ffffff1a;border-radius:8px;padding:12px;font-family:ui-monospace,monospace}</style></head>
-<body><header><h1>Ops-Management-Dashboard &mdash; Interactive Tour (TODO)</h1><p>4-lesson split-panel tour scaffold. See docs/LESSON_PLAN.md.</p></header>
-<main><section class="lesson"><h2>Lesson 1 &mdash; TODO</h2><p>Concept + diagram on the left.</p></section>
-<section class="practice"><h3>Practice (TODO)</h3><textarea>// TODO starter code</textarea></section></main></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ops-Management-Dashboard — Interactive Tour</title>
+<style>
+  :root{--bg:#06180f;--accent:#22c55e;--text:#e6f7ec;--muted:#86a894;--panel:#ffffff0a;--ok:#2EA56B;--bad:#C2453E;}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--text)}
+  header{padding:18px 24px;border-bottom:1px solid #ffffff1a}
+  header h1{margin:0;font-size:18px}
+  header p{margin:4px 0 0;color:var(--muted);font-size:13px}
+  .pills{display:flex;gap:8px;padding:12px 24px;flex-wrap:wrap}
+  .pill{padding:6px 12px;border-radius:999px;font-size:12px;cursor:pointer;background:var(--panel);border:1px solid #ffffff1a;color:var(--muted)}
+  .pill.active{background:var(--accent);color:#06180f;font-weight:700;border-color:var(--accent)}
+  main{display:grid;grid-template-columns:1fr 1fr;min-height:62vh}
+  .lesson,.practice{padding:24px;overflow:auto}
+  .lesson{border-right:1px solid #ffffff1a}
+  .lesson h2{color:#86efac;margin-top:0}
+  .lesson code,.lesson pre{background:#00000055;border-radius:6px}
+  .lesson pre{padding:12px;overflow:auto;font-size:13px}
+  .lesson code{padding:1px 5px;font-size:13px}
+  .practice h3{margin-top:0;color:var(--muted);text-transform:uppercase;font-size:12px;letter-spacing:1px}
+  .practice pre{background:#00000055;border-radius:8px;padding:12px;overflow:auto;font-size:13px;font-family:ui-monospace,monospace}
+  nav{display:flex;justify-content:space-between;align-items:center;padding:16px 24px;border-top:1px solid #ffffff1a}
+  button{background:var(--accent);color:#06180f;border:0;border-radius:8px;padding:10px 16px;font-weight:700;cursor:pointer;margin:0 8px 0 0}
+  button.ghost{background:transparent;color:var(--accent);border:1px solid var(--accent)}
+  button:disabled{opacity:.4;cursor:default}
+  .note{font-size:12px;color:var(--muted);margin-top:8px}
+  .diagram-card{background:#fff;border-radius:10px;padding:16px;margin-bottom:14px}
+  .diagram-card svg{width:100%;height:auto;display:block}
+  .diagram-card figcaption{font-family:sans-serif;font-size:11px;color:#666;margin-bottom:6px}
+  .quiz-panel{padding:24px;max-width:760px;margin:0 auto}
+  .quiz-panel h2{color:#86efac;margin-top:0}
+  .qtext{font-size:16px;font-weight:600;margin:6px 0 14px}
+  .qopt{display:block;width:100%;text-align:left;background:var(--panel);color:var(--text);border:1px solid #ffffff1f;border-radius:8px;padding:12px 14px;margin:8px 0;cursor:pointer;font-size:14px;font-family:inherit}
+  .qopt:hover:not(:disabled){border-color:var(--accent)}
+  .qopt.ok{border-color:var(--ok);background:#2ea56b22}
+  .qopt.bad{border-color:var(--bad);background:#c2453e22}
+  .qexplain{display:none;margin-top:12px;padding:12px;border-left:3px solid var(--accent);background:#ffffff0d;border-radius:4px;font-size:13px}
+  .qfoot{display:flex;justify-content:space-between;align-items:center;margin-top:18px}
+  .qfoot .sc{color:var(--muted);font-size:13px}
+  .cl{border:1px solid #ffffff1f;border-radius:10px;padding:14px 16px;margin-top:18px;background:var(--panel)}
+  .cl .cap{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:700;margin-bottom:8px}
+  .cl a{display:block;color:var(--text);text-decoration:none;padding:5px 0;font-size:13px}
+  .cl a:hover{color:#86efac}
+  .cl .tag{font-size:10px;font-weight:700;text-transform:uppercase;color:#86efac;margin-right:6px}
+  .qc{border:1px solid #ffffff1f;border-radius:10px;padding:14px 16px;margin-top:12px}
+  .qc .cap{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:700;margin-bottom:8px}
+  .qc .qt{font-size:14px;font-weight:600;margin-bottom:10px}
+  .qc .qcopt{display:block;width:100%;text-align:left;background:var(--panel);color:var(--text);border:1px solid #ffffff1f;border-radius:8px;padding:9px 12px;margin:6px 0;cursor:pointer;font-size:13px;font-family:inherit}
+  .qc .qcopt:hover:not(:disabled){border-color:var(--accent)}
+  .qc .qcopt.ok{border-color:var(--ok);background:#2ea56b22}
+  .qc .qcopt.bad{border-color:var(--bad);background:#c2453e22}
+  .qc .qcexplain{display:none;margin-top:10px;padding:10px;border-left:3px solid var(--accent);background:#ffffff0d;border-radius:4px;font-size:12px}
+  .report-card{padding:24px;max-width:580px;margin:0 auto}
+  .report-card h4{margin:16px 0 6px;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+  .report-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #ffffff14;font-size:14px}
+  .report-row .grade{font-weight:700}
+  .grade-A{color:#2EA56B}.grade-B{color:#9ad24a}.grade-C{color:#e0b63c}.grade-D,.grade-F{color:#C2453E}.grade-dash{color:var(--muted)}
+  .report-overall{display:flex;align-items:baseline;gap:10px;margin:14px 0}
+  .report-overall .big{font-size:38px;font-weight:800;color:#86efac}
+  @media print{
+    header,.pills,nav,.report-card button{display:none!important}
+    body{background:#fff;color:#111}
+    .report-row{border-bottom-color:#ddd}
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>📟 Ops-Management-Dashboard &mdash; Interactive Tour <span style="color:var(--muted);font-weight:400;font-size:12px">· Chain C · concept tour</span></h1>
+  <p>Left: the concept. Right: the real code from this repo &mdash; concept-only, no live execution engine.</p>
+  <p style="font-size:11px;color:var(--muted);margin-top:4px">Progress (quick checks, quiz score) saves in this browser only &mdash; localStorage, not an account.</p>
+</header>
+<div class="pills" id="pills"></div>
+<main>
+  <section class="lesson" id="lesson"></section>
+  <section class="practice" id="practice"></section>
+</main>
+<section class="quiz-panel" id="quizPanel" style="display:none"></section>
+<section class="report-card" id="toolPanel" style="display:none"></section>
+<nav>
+  <button class="ghost" onclick="go(-1)">← Previous</button>
+  <span id="counter"></span>
+  <button class="ghost" id="nextBtn" onclick="go(1)">Next →</button>
+</nav>
+
+<script>
+function httpVsWsSVG(){
+  return `<div class="diagram-card"><figcaption>HTTP: one request, one response, connection closes. WebSocket: one handshake, then either side can send, anytime, until someone closes it</figcaption>
+  <svg viewBox="0 0 640 160" xmlns="http://www.w3.org/2000/svg">
+    <text x="20" y="20" font-size="10" font-weight="700" fill="#374151">HTTP (polling)</text>
+    ${[0,1,2].map(idx=>{const y=35+idx*22;return `<line x1="40" y1="${y}" x2="220" y2="${y}" stroke="#9ca3af" stroke-width="1.5" stroke-dasharray="5,5"/><text x="230" y="${y+4}" font-size="8" fill="#6b7280">GET /tickets -&gt; []</text>`}).join('')}
+    <text x="20" y="115" font-size="10" font-weight="700" fill="#374151">WebSocket (push)</text>
+    <line x1="40" y1="130" x2="220" y2="130" stroke="#22c55e" stroke-width="2.5"/>
+    <circle cx="380" cy="130" r="4" fill="#22c55e"><animate attributeName="cx" from="40" to="220" dur="1.2s" repeatCount="indefinite"/></circle>
+    <text x="230" y="134" font-size="8" fill="#15803d" font-weight="700">connection open &mdash; server pushes the instant a ticket changes</text>
+  </svg></div>`;
+}
+function connectionManagerSVG(){
+  return `<div class="diagram-card"><figcaption>broadcast() checks each connection's ROLE against the event's target_role &mdash; not every connection gets every event</figcaption>
+  <svg viewBox="0 0 640 160" xmlns="http://www.w3.org/2000/svg">
+    <rect x="30" y="60" width="150" height="46" rx="8" fill="#15803d"/>
+    <text x="105" y="88" text-anchor="middle" font-size="10.5" font-weight="700" fill="#fff">ConnectionManager</text>
+    <rect x="300" y="20" width="140" height="40" rx="8" fill="#22c55e"/>
+    <text x="370" y="44" text-anchor="middle" font-size="10" font-weight="700" fill="#06180f">user 1 (MANAGER)</text>
+    <rect x="300" y="100" width="140" height="40" rx="8" fill="#9ca3af"/>
+    <text x="370" y="124" text-anchor="middle" font-size="10" font-weight="700" fill="#1f2937">user 2 (STAFF)</text>
+    <line x1="180" y1="75" x2="300" y2="40" stroke="#22c55e" stroke-width="2.5" stroke-dasharray="6,6"><animate attributeName="stroke-dashoffset" from="24" to="0" dur="1s" repeatCount="indefinite"/></line>
+    <line x1="180" y1="90" x2="300" y2="120" stroke="#9ca3af" stroke-width="1.5" stroke-dasharray="3,5"/>
+    <text x="490" y="35" font-size="9" fill="#15803d" font-weight="700">target_role=MANAGER</text>
+    <text x="490" y="125" font-size="9" fill="#6b7280">excluded</text>
+  </svg></div>`;
+}
+function rbacSVG(){
+  return `<div class="diagram-card"><figcaption>require_manager 403s BEFORE the route body runs &mdash; TICKETS.get(...) never executes for a STAFF caller</figcaption>
+  <svg viewBox="0 0 640 140" xmlns="http://www.w3.org/2000/svg">
+    <rect x="20" y="20" width="140" height="40" rx="8" fill="#9ca3af"/>
+    <text x="90" y="44" text-anchor="middle" font-size="10" font-weight="700" fill="#1f2937">STAFF request</text>
+    <rect x="20" y="80" width="140" height="40" rx="8" fill="#22c55e"/>
+    <text x="90" y="104" text-anchor="middle" font-size="10" font-weight="700" fill="#06180f">MANAGER request</text>
+    <rect x="250" y="50" width="160" height="40" rx="8" fill="#15803d"/>
+    <text x="330" y="74" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">require_manager()</text>
+    <rect x="490" y="20" width="130" height="36" rx="8" fill="#C2453E"/>
+    <text x="555" y="43" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">403 Forbidden</text>
+    <rect x="490" y="84" width="130" height="36" rx="8" fill="#22c55e"/>
+    <text x="555" y="107" text-anchor="middle" font-size="10" font-weight="700" fill="#06180f">route body runs</text>
+    <line x1="160" y1="40" x2="250" y2="62" stroke="#9ca3af" stroke-width="1.5" stroke-dasharray="4,5"/>
+    <line x1="160" y1="100" x2="250" y2="78" stroke="#22c55e" stroke-width="2"/>
+    <line x1="410" y1="62" x2="490" y2="40" stroke="#C2453E" stroke-width="1.5" stroke-dasharray="4,5"/>
+    <line x1="410" y1="78" x2="490" y2="100" stroke="#22c55e" stroke-width="2"/>
+  </svg></div>`;
+}
+function realtimeUISVG(){
+  return `<div class="diagram-card"><figcaption>the frontend never patches state by hand &mdash; a pushed event just invalidates the query, and React Query refetches</figcaption>
+  <svg viewBox="0 0 640 140" xmlns="http://www.w3.org/2000/svg">
+    <rect x="20" y="50" width="130" height="40" rx="8" fill="#15803d"/>
+    <text x="85" y="74" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">WebSocket event</text>
+    <rect x="250" y="50" width="150" height="40" rx="8" fill="#22c55e"/>
+    <text x="325" y="74" text-anchor="middle" font-size="9.5" font-weight="700" fill="#06180f">invalidateQueries(["tickets"])</text>
+    <rect x="490" y="20" width="130" height="36" rx="8" fill="#f3f4f6" stroke="#9ca3af"/>
+    <text x="555" y="43" text-anchor="middle" font-size="9" fill="#374151">useTickets() refetches</text>
+    <rect x="490" y="84" width="130" height="36" rx="8" fill="#f3f4f6" stroke="#9ca3af"/>
+    <text x="555" y="107" text-anchor="middle" font-size="9" fill="#374151">component re-renders</text>
+    <line x1="150" y1="70" x2="250" y2="70" stroke="#22c55e" stroke-width="2" stroke-dasharray="6,6"><animate attributeName="stroke-dashoffset" from="24" to="0" dur="1s" repeatCount="indefinite"/></line>
+    <line x1="400" y1="60" x2="490" y2="38" stroke="#9ca3af" stroke-width="1.5" stroke-dasharray="4,5"/>
+    <line x1="400" y1="80" x2="490" y2="102" stroke="#9ca3af" stroke-width="1.5" stroke-dasharray="4,5"/>
+  </svg></div>`;
+}
+
+const LESSONS = [
+{
+  short:"1. HTTP vs WS",
+  title:"1 — HTTP vs WebSockets",
+  body:`<p>Every project so far has been request/response: the client asks, the server answers, the connection closes. A dashboard that wants "live" data from that model has exactly one option — poll, over and over, mostly asking "anything new?" and getting "no." A <b>WebSocket</b> is a single long-lived connection where either side can send a message at any time, with no request to trigger it.</p>
+  <p>That's the entire shift this project makes: <code>POST /tickets</code> still works exactly like C-1's API, but now it also <i>pushes</i> a message to whichever connected dashboards should know about it &mdash; the instant it happens, not whenever they next poll.</p>`,
+  diagram: httpVsWsSVG(),
+  code:`# backend/app/main.py\n@app.websocket("/ws/{user_id}")\nasync def websocket_endpoint(websocket: WebSocket, user_id: int, role: Role) -> None:\n    await manager.connect(user_id, role, websocket)\n    try:\n        while True:\n            await websocket.receive_json()\n    except WebSocketDisconnect:\n        manager.disconnect(user_id)`,
+  continueLearning:[
+    {type:"read",label:"FastAPI — WebSockets",url:"https://fastapi.tiangolo.com/advanced/websockets/"}
+  ],
+  quickCheck:{
+    q:"What can a WebSocket connection do that a client polling GET /tickets every 2 seconds cannot?",
+    options:[
+      {t:"Let the SERVER initiate sending data the instant something changes, with no request needed to trigger it",ok:true},
+      {t:"Send JSON instead of plain text",ok:false},
+      {t:"Work without an internet connection",ok:false}
+    ],
+    explain:"Polling is still fundamentally request/response — the client always has to ask. A WebSocket lets the server push the moment it has something new, which is the only way to get updates faster than your poll interval without hammering the server."
+  }
+},
+{
+  short:"2. ConnectionManager",
+  title:"2 — The ConnectionManager Pattern",
+  body:`<p><code>active_connections: dict[int, tuple[WebSocket, str]]</code> &mdash; keyed by <code>user_id</code>, storing each connection alongside the role it connected with. <code>broadcast(event)</code> walks every connection and sends only to the ones whose role matches <code>event.target_role</code> (or everyone, if it's <code>"ALL"</code>).</p>
+  <p><b>A real trap this project's own test fell into:</b> the first version of the "staff should NOT receive a MANAGER-targeted event" test tried to prove <i>absence</i> by calling <code>receive_json(timeout=0.2)</code> inside a try/except, treating any exception as "nothing arrived." Starlette's test session doesn't accept a <code>timeout</code> argument at all &mdash; so it raised <code>TypeError</code> <i>immediately</i>, every single time, regardless of whether an event had actually leaked through. The test passed even after deliberately breaking <code>broadcast()</code> to ignore <code>target_role</code> completely.</p>
+  <p>The fix: stop trying to prove absence with a timeout, and prove <b>ordering</b> instead &mdash; trigger a second, STAFF-targeted event right after, and assert staff's <i>first</i> received message is that one, not the manager-targeted one. If the first event had leaked through, this assertion fails immediately, no timeout needed.</p>`,
+  diagram: connectionManagerSVG(),
+  code:`# backend/app/connection_manager.py\nasync def broadcast(self, event: WSEvent) -> int:\n    sent = 0\n    for _uid, (ws, role) in list(self.active_connections.items()):\n        if event.target_role == "ALL" or role == event.target_role:\n            await ws.send_json(event.model_dump(mode="json"))\n            sent += 1\n    return sent`,
+  continueLearning:[
+    {type:"read",label:"FastAPI — Testing WebSockets",url:"https://fastapi.tiangolo.com/advanced/testing-websockets/"}
+  ],
+  quickCheck:{
+    q:"Why did the original test pass even when broadcast() was mutated to send every event to every connection, ignoring target_role entirely?",
+    options:[
+      {t:"The test asserted ABSENCE using a timeout kwarg the test client doesn't support — the resulting TypeError was silently caught and treated as proof nothing arrived",ok:true},
+      {t:"Because the mutation didn't actually change behavior",ok:false},
+      {t:"Because Starlette's TestClient ignores target_role by design",ok:false}
+    ],
+    explain:"A test that can't fail isn't testing anything. Proving ordering (which event arrives FIRST) instead of absence (nothing arrives within some wait) is what made the fixed version actually catch the bug."
+  }
+},
+{
+  short:"3. RBAC",
+  title:"3 — Role-Based Access Control",
+  body:`<p><code>require_manager</code> is a FastAPI <b>dependency</b>, not an <code>if</code> statement inside the route. That placement matters: FastAPI resolves dependencies <i>before</i> the route function body runs, so a STAFF caller to <code>POST /tickets/{id}/assign</code> gets <code>403</code> before <code>TICKETS.get(ticket_id)</code> &mdash; or anything else in that function &mdash; ever executes.</p>
+  <p>Authentication (who are you &mdash; trimmed to a header here) and authorization (what are you allowed to do &mdash; <code>require_manager</code>) stay as two separate, composable pieces, the same separation C-1's JWT auth made.</p>`,
+  diagram: rbacSVG(),
+  code:`# backend/app/deps.py\ndef require_manager(x_user_role: Role = Header(...)) -> Role:\n    if x_user_role != "MANAGER":\n        raise HTTPException(status.HTTP_403_FORBIDDEN, "Manager role required")\n    return x_user_role\n\n# backend/app/main.py\n@app.post("/tickets/{ticket_id}/assign")\nasync def assign_ticket(ticket_id: int, assignee_id: int,\n                        role: Role = Depends(require_manager)) -> Ticket:\n    ...`,
+  continueLearning:[
+    {type:"read",label:"FastAPI — WebSockets (Depends with WebSocket endpoints)",url:"https://fastapi.tiangolo.com/advanced/websockets/"}
+  ],
+  quickCheck:{
+    q:"Why does require_manager run as a FastAPI dependency instead of an if-statement at the top of assign_ticket's body?",
+    options:[
+      {t:"A dependency is resolved before the route body runs at all — a rejected request never executes any of the function's logic, by construction",ok:true},
+      {t:"Dependencies run faster than inline if-statements",ok:false},
+      {t:"FastAPI doesn't allow HTTPException to be raised inside a route body",ok:false}
+    ],
+    explain:"An inline check is one refactor (someone moving code above it) away from being bypassed. A dependency is structurally guaranteed to run first — there's no code path that reaches the route body without passing it."
+  }
+},
+{
+  short:"4. Real-Time UI",
+  title:"4 — Real-Time UI Updates",
+  body:`<p><code>useWebSocket.ts</code> owns the connection and reconnect logic; <code>WebSocketProvider.tsx</code> is the only thing that decides what an incoming event MEANS. Its rule is deliberately broad: any <code>event_type</code> starting with <code>"ticket_"</code> invalidates the <code>["tickets"]</code> query &mdash; not a <code>switch</code> matching each exact event type to a specific state patch.</p>
+  <p><b>The trap <code>useWebSocket.ts</code> guards against:</b> <code>ws.onclose</code> fires both when the connection actually drops AND when you call <code>socket.close()</code> yourself (e.g., the component unmounting). Without the <code>closedByEffectCleanup</code> flag, unmounting would trigger the reconnect handler, which would open a brand new socket for a component that no longer exists &mdash; and that socket's own eventual close would schedule another reconnect, forever.</p>`,
+  diagram: realtimeUISVG(),
+  code:`// frontend/src/hooks/useWebSocket.ts\nsocket.onclose = () => {\n  if (!closedByEffectCleanup) {\n    reconnectTimer = setTimeout(connect, 2000);\n  }\n};\n// cleanup:\nreturn () => {\n  closedByEffectCleanup = true;\n  clearTimeout(reconnectTimer);\n  socket.close();\n};`,
+  continueLearning:[
+    {type:"read",label:"MDN — WebSocket API",url:"https://developer.mozilla.org/en-US/docs/Web/API/WebSocket"},
+    {type:"read",label:"TanStack Query — Query Invalidation",url:"https://tanstack.com/query/latest/docs/framework/react/guides/query-invalidation"}
+  ],
+  quickCheck:{
+    q:"Without the closedByEffectCleanup guard, what happens when the component using useWebSocket unmounts?",
+    options:[
+      {t:"Nothing — unmounting a React component automatically prevents further timers",ok:false},
+      {t:"socket.close() during cleanup fires onclose, which (without the guard) schedules a reconnect for a component that no longer exists — an immortal reconnect loop",ok:true},
+      {t:"The browser blocks WebSocket reconnection attempts after unmount automatically",ok:false}
+    ],
+    explain:"onclose can't tell the difference between 'the network dropped' and 'I closed this on purpose.' The flag is the only thing distinguishing those two cases."
+  }
+}
+];
+
+let i = 0;
+const el = id => document.getElementById(id);
+
+const QC_KEY = 'chainC_opsManagementDashboard_v1';
+function loadQC(){ try{ const raw = localStorage.getItem(QC_KEY); return raw ? JSON.parse(raw) : null; } catch(e){ return null; } }
+const QC_SAVED = loadQC();
+const qcAnswered = (QC_SAVED && Array.isArray(QC_SAVED.qcAnswered) && QC_SAVED.qcAnswered.length===LESSONS.length)
+  ? QC_SAVED.qcAnswered.slice() : new Array(LESSONS.length).fill(false);
+let bestQuizScore = (QC_SAVED && typeof QC_SAVED.quizScore === 'number') ? QC_SAVED.quizScore : null;
+function saveQC(){ try{ localStorage.setItem(QC_KEY, JSON.stringify({qcAnswered, quizScore: bestQuizScore})); } catch(e){} }
+
+function renderCL(links){
+  if(!links || !links.length) return '';
+  const rows = links.map(l=>'<a href="'+l.url+'" target="_blank" rel="noopener"><span class="tag">'+(l.type==='watch'?'Watch':'Read')+'</span>'+l.label+'</a>').join('');
+  return '<div class="cl"><div class="cap">📚 Continue Learning</div>'+rows+'</div>';
+}
+function renderQC(idx){
+  const l = LESSONS[idx];
+  if(!l.quickCheck) return '';
+  const done = qcAnswered[idx];
+  const q = l.quickCheck;
+  const opts = q.options.map((o,oi)=>'<button class="qcopt '+(done && o.ok?'ok':'')+'" data-oi="'+oi+'" '+(done?'disabled':'')+'>'+o.t+'</button>').join('');
+  return '<div class="qc"><div class="cap">✓ Quick Check</div><div class="qt">'+q.q+'</div>'+
+    '<div id="qcopts-'+idx+'">'+opts+'</div>'+
+    '<div class="qcexplain" id="qcexplain-'+idx+'" style="'+(done?'display:block':'')+'">'+q.explain+'</div>'+
+    (done?'':'<div class="note" style="margin-top:8px">Answer to unlock &ldquo;Next&rdquo;.</div>')+'</div>';
+}
+function pickQC(lessonIdx, oi){
+  if(qcAnswered[lessonIdx]) return;
+  qcAnswered[lessonIdx]=true;
+  const q=LESSONS[lessonIdx].quickCheck;
+  document.querySelectorAll('#qcopts-'+lessonIdx+' .qcopt').forEach((b,bi)=>{
+    b.disabled=true; if(q.options[bi].ok) b.classList.add('ok'); else if(bi===oi) b.classList.add('bad');
+  });
+  el('qcexplain-'+lessonIdx).style.display='block';
+  saveQC();
+  updateNextEnabled();
+}
+function updateNextEnabled(){
+  const nb = el('nextBtn');
+  if(nb) nb.disabled = !qcAnswered[i];
+}
+
+function render(){
+  const l = LESSONS[i];
+  el('lesson').innerHTML = '<h2>'+l.title+'</h2>'+l.body+renderCL(l.continueLearning)+renderQC(i);
+  const qcContainer = el('qcopts-'+i);
+  if(qcContainer){ qcContainer.querySelectorAll('.qcopt').forEach(btn=>{ btn.onclick=()=>pickQC(i, +btn.dataset.oi); }); }
+  el('practice').innerHTML = '<h3>Diagram + Code</h3>' + l.diagram + '<pre>'+l.code.replace(/</g,'&lt;')+'</pre>';
+  el('counter').textContent=(i+1)+' / '+LESSONS.length;
+  document.querySelectorAll('.pill').forEach((p,idx)=>p.classList.toggle('active',idx===i));
+  updateNextEnabled();
+}
+function go(d){ i=Math.max(0,Math.min(LESSONS.length-1,i+d)); render(); }
+function showLesson(){
+  el('quizPanel').style.display='none';
+  el('toolPanel').style.display='none';
+  document.querySelector('main').style.display='grid';
+  document.querySelector('nav').style.display='flex';
+}
+
+const QUIZ = [
+  {q:"What does a WebSocket connection let the server do that plain HTTP polling cannot?",
+   options:[{t:"Initiate sending data the instant something changes, without waiting for a request",ok:true},{t:"Send larger payloads than HTTP allows",ok:false},{t:"Skip TCP entirely for lower latency",ok:false}],
+   explain:"Polling is still request/response at its core. A WebSocket's persistent connection is what lets the server push unprompted."},
+  {q:"ConnectionManager.active_connections is typed dict[int, tuple[WebSocket, str]] keyed by user_id. Why store the role alongside the socket?",
+   options:[{t:"So broadcast() can filter WHO receives an event by role, without a separate lookup",ok:true},{t:"Because FastAPI requires role to be stored with every WebSocket",ok:false},{t:"To reduce memory usage compared to storing just the socket",ok:false}],
+   explain:"Role-scoped broadcasting is the entire point of this pattern — storing (websocket, role) together is what makes 'send only to MANAGER connections' a simple filter instead of a separate lookup per connection."},
+  {q:"The project's first WebSocket test passed even when broadcast() was deliberately broken to ignore target_role. What was the actual flaw in that test?",
+   options:[{t:"It tried to prove absence using a timeout kwarg the test client doesn't support, so a TypeError was silently treated as 'nothing arrived'",ok:true},{t:"It didn't use async/await correctly",ok:false},{t:"It connected to the wrong WebSocket URL",ok:false}],
+   explain:"A test that can't fail isn't verifying anything. The fix proves ordering (which event arrives first) instead of trying to prove a timeout-based absence the test client can't express."},
+  {q:"Why does require_manager run as a dependency rather than an if-check inside assign_ticket's body?",
+   options:[{t:"Dependencies resolve before the route body runs — a rejected request never executes any of the function's logic",ok:true},{t:"It's purely a style preference with no behavioral difference",ok:false},{t:"FastAPI requires all authorization logic to be in deps.py by convention",ok:false}],
+   explain:"Structural enforcement beats an inline check that a future refactor could accidentally move past or remove."},
+  {q:"Without the closedByEffectCleanup flag in useWebSocket.ts, what happens when a component unmounts?",
+   options:[{t:"ws.onclose fires from the deliberate socket.close() and schedules a reconnect for a component that no longer exists",ok:true},{t:"React automatically cancels all pending setTimeout calls on unmount",ok:false},{t:"The browser refuses to let onclose fire during unmount",ok:false}],
+   explain:"onclose can't distinguish 'closed on purpose' from 'connection dropped' — the flag is what makes that distinction instead of the browser."},
+  {q:"Why does WebSocketProvider invalidate the [\"tickets\"] query instead of directly patching React Query's cached data with the event's payload?",
+   options:[{t:"Invalidating by a shared event_type prefix means new backend event types work automatically, with no frontend code change required",ok:true},{t:"Direct cache patching is not supported by TanStack Query",ok:false},{t:"Invalidation is faster than patching in every case",ok:false}],
+   explain:"A switch matching every exact event_type to a manual patch has to be kept in sync with the backend by hand. Invalidating broadly means the frontend doesn't need to know every event shape, just that something ticket-related changed."}
+];
+let qi=0, qscore=0, qansw=false;
+function openQuiz(){
+  document.querySelector('main').style.display='none';
+  document.querySelector('nav').style.display='none';
+  el('quizPanel').style.display='block';
+  document.querySelectorAll('.pill').forEach(p=>p.classList.remove('active'));
+  el('quizpill').classList.add('active');
+  qi=0; qscore=0; renderQuiz();
+}
+function renderQuiz(){
+  qansw=false;
+  const it=QUIZ[qi];
+  el('quizPanel').innerHTML='<h2>Check Your Understanding</h2>'+
+    '<div class="qtext">'+(qi+1)+' / '+QUIZ.length+' &mdash; '+it.q+'</div><div id="qopts"></div>'+
+    '<div class="qexplain" id="qexplain">'+it.explain+'</div>'+
+    '<div class="qfoot"><span class="sc" id="qsc">Score: '+qscore+' / '+QUIZ.length+'</span>'+
+    '<button class="ghost" id="qnext" disabled onclick="nextQuiz()">'+(qi===QUIZ.length-1?'See score →':'Next →')+'</button></div>';
+  const o=el('qopts');
+  it.options.forEach((op,idx)=>{const b=document.createElement('button');b.className='qopt';b.textContent=op.t;b.onclick=(e)=>pickQuiz(idx,e.currentTarget);o.appendChild(b);});
+}
+function pickQuiz(idx,btn){
+  if(qansw)return; qansw=true;
+  const it=QUIZ[qi];
+  el('qopts').querySelectorAll('.qopt').forEach((b,i2)=>{b.disabled=true;if(it.options[i2].ok)b.classList.add('ok');});
+  if(it.options[idx].ok){qscore++;el('qsc').textContent='Score: '+qscore+' / '+QUIZ.length;} else btn.classList.add('bad');
+  el('qexplain').style.display='block'; el('qnext').disabled=false;
+}
+function nextQuiz(){ qi++; if(qi<QUIZ.length)renderQuiz(); else finishQuiz(); }
+function finishQuiz(){
+  const pct=Math.round(qscore/QUIZ.length*100);
+  const msg=pct===100?'Perfect — you’ve got this.':pct>=70?'Solid understanding.':pct>=40?'Good start — revisit the lessons you missed.':'Worth another pass through the lessons.';
+  el('quizPanel').innerHTML='<h2>Check Your Understanding</h2><div class="qtext">You scored '+qscore+' / '+QUIZ.length+' ('+pct+'%)</div><p>'+msg+'</p>'+
+    '<button class="ghost" onclick="restartQuiz()">↺ Retake</button> <button class="ghost" onclick="showLesson()">← Back to lessons</button>';
+  bestQuizScore = (bestQuizScore===null) ? qscore : Math.max(bestQuizScore, qscore);
+  saveQC();
+}
+function restartQuiz(){ qi=0; qscore=0; renderQuiz(); }
+
+function letterGrade(pct){
+  if(pct===null) return {text:'—',cls:'grade-dash'};
+  if(pct>=90) return {text:'A',cls:'grade-A'};
+  if(pct>=80) return {text:'B',cls:'grade-B'};
+  if(pct>=70) return {text:'C',cls:'grade-C'};
+  if(pct>=60) return {text:'D',cls:'grade-D'};
+  return {text:'F',cls:'grade-F'};
+}
+function renderReportCard(){
+  const qcDone = qcAnswered.filter(Boolean).length;
+  const attempted = bestQuizScore !== null;
+  const pct = attempted ? Math.round(bestQuizScore/QUIZ.length*100) : null;
+  const grade = letterGrade(attempted?pct:null);
+  const overallItems = qcDone + (attempted?1:0);
+  const overallTotal = LESSONS.length+1;
+  const overallPct = Math.round(overallItems/overallTotal*100);
+  const now = new Date();
+  el('toolPanel').innerHTML =
+    '<h2 style="color:#86efac;margin-top:0">Report Card</h2>'+
+    '<p style="color:var(--muted);font-size:12px;margin-top:-6px">Ops-Management-Dashboard &middot; generated '+now.toLocaleDateString()+' '+now.toLocaleTimeString()+'</p>'+
+    '<div class="report-overall"><span class="big '+grade.cls+'">'+grade.text+'</span><span style="color:var(--muted);font-size:13px">Final quiz grade'+(attempted?'':' (not yet taken)')+'</span></div>'+
+    '<h4>Lessons</h4><div class="report-row"><span>Quick checks completed</span><span class="grade">'+qcDone+' / '+LESSONS.length+'</span></div>'+
+    '<h4>Final Quiz</h4><div class="report-row"><span>Best score</span><span class="grade">'+(attempted?(bestQuizScore+' / '+QUIZ.length+' ('+pct+'%)'):'Not attempted')+'</span></div>'+
+    '<h4>Overall</h4><div class="report-row"><span>Lessons + quiz completed</span><span class="grade">'+overallItems+' / '+overallTotal+' ('+overallPct+'%)</span></div>'+
+    '<button class="ghost" id="printBtn" style="margin-top:16px">🖨️ Print / Save as PDF</button>'+
+    '<p style="color:var(--muted);font-size:11px;margin-top:8px">In the print dialog, choose <b>Save as PDF</b> and save it into this project\'s <code>docs/</code> folder to keep a dated record.</p>';
+  el('printBtn').onclick = ()=>window.print();
+}
+function openReportCard(){
+  document.querySelector('main').style.display='none';
+  document.querySelector('nav').style.display='none';
+  el('quizPanel').style.display='none';
+  el('toolPanel').style.display='block';
+  document.querySelectorAll('.pill').forEach(p=>p.classList.remove('active'));
+  el('reportpill').classList.add('active');
+  renderReportCard();
+}
+
+const pills=el('pills');
+LESSONS.forEach((l,idx)=>{const b=document.createElement('div');b.className='pill';b.textContent=l.short;b.onclick=()=>{showLesson();i=idx;render();};pills.appendChild(b);});
+const qp=document.createElement('div');qp.className='pill';qp.id='quizpill';qp.textContent='✓ Quiz';qp.onclick=openQuiz;pills.appendChild(qp);
+const rp=document.createElement('div');rp.className='pill';rp.id='reportpill';rp.textContent='📊 Report Card';rp.onclick=openReportCard;pills.appendChild(rp);
+render();
+</script>
+</body>
+</html>
